@@ -92,17 +92,27 @@ If logs show `getaddrinfo for db failed`, your app is still using the old defaul
 - Container port: **80**
 - Point your EasyPanel domain to this service
 
-### 4) Mounts (recommended)
+### 4) Mounts / Volumes (**required for persistent data**)
 
-| Mount path | Purpose |
-| --- | --- |
-| `/var/www/html/var` | Persist config / install state |
+EasyPanel does **not** create app volumes from the image automatically.  
+Open **Mounts** → add **Volume** mounts (see also [`easypanel.mounts.txt`](./easypanel.mounts.txt) and [`docker-compose.yml`](./docker-compose.yml)):
 
-The image fixes ownership/permissions on start. If System check still says `/var/www/html/var` is not writable, Redeploy after pulling the latest `6.0.8` image (entrypoint applies `chmod a+rwX`).
+| Volume name | Mount path | Stores |
+| --- | --- | --- |
+| `revive-var` | `/var/www/html/var` | Config, `INSTALLED`, cache, plugin data (**required**) |
+| `revive-images` | `/var/www/html/www/images` | Uploaded banners/creatives (**required**) |
+| `revive-plugins` | `/var/www/html/plugins` | Plugins (recommended) |
+| `revive-admin-plugins` | `/var/www/html/www/admin/plugins` | Admin plugins (recommended) |
+
+Without these, redeploy/restart can wipe install config and uploaded ads.
+
+The image fixes ownership on start (`chmod a+rwX`). If System check still says `/var/www/html/var` is not writable, Redeploy after pulling latest `6.0.8`.
 
 ### 5) MySQL
 
-Create a MySQL service in the same EasyPanel project, create DB/user, then set `DB_HOST` / credentials above to match.
+Create a **MySQL** service in the same EasyPanel project (it has its own data volume).  
+Create DB/user, then set `DB_HOST` / credentials above to match.  
+Campaign and statistics data live in MySQL — keep that MySQL volume.
 
 ### What happens on Deploy
 

@@ -1,0 +1,18 @@
+# EasyPanel → App service → Mounts
+# Add these BEFORE first successful install / Deploy.
+# Type = Volume for each row.
+
+# Name                 Mount path
+revive-var             /var/www/html/var
+revive-images          /var/www/html/www/images
+revive-plugins         /var/www/html/plugins
+revive-admin-plugins   /var/www/html/www/admin/plugins
+
+# What each volume stores:
+# revive-var           → conf.php, INSTALLED, cache, templates_compiled, plugin DataObjects
+# revive-images        → uploaded ad creatives / banners
+# revive-plugins       → plugin packages
+# revive-admin-plugins → admin UI plugin files
+#
+# Also keep a MySQL service volume (EasyPanel MySQL service does this automatically)
+# so campaign/stats data survives restarts.

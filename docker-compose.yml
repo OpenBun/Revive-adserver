@@ -1,0 +1,52 @@
+# Local / EasyPanel Compose reference for Revive Adserver volumes.
+# Image: openbun/revive-adserver:6.0.8
+#
+# EasyPanel (Docker Image source) → Mounts: add the same paths as named volumes below.
+
+services:
+  revive:
+    image: openbun/revive-adserver:6.0.8
+    ports:
+      - "8080:80"
+    environment:
+      DB_TYPE: mysqli
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: revive
+      DB_USER: revive
+      DB_PASSWORD: changeme
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: changeme
+      ADMIN_EMAIL: admin@example.com
+      APP_HOSTNAME: localhost
+      REQUIRE_SSL: "0"
+    volumes:
+      # Required — config, INSTALLED marker, caches, plugin dataobjects
+      - revive-var:/var/www/html/var
+      # Required — uploaded banners / creatives
+      - revive-images:/var/www/html/www/images
+      # Recommended — installed/custom plugins
+      - revive-plugins:/var/www/html/plugins
+      # Recommended — admin plugin copies
+      - revive-admin-plugins:/var/www/html/www/admin/plugins
+    depends_on:
+      - mysql
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: revive
+      MYSQL_USER: revive
+      MYSQL_PASSWORD: changeme
+    volumes:
+      - revive-mysql:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  revive-var:
+  revive-images:
+  revive-plugins:
+  revive-admin-plugins:
+  revive-mysql:

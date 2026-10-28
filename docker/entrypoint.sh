@@ -85,6 +85,18 @@ fix_writable_dirs() {
 
 fix_writable_dirs
 
+# Warn when critical paths are not bind/volume mounts (data lost on EasyPanel redeploy)
+for mount_path in \
+  "${APP_ROOT}/var" \
+  "${APP_ROOT}/www/images"
+do
+  if ! grep -q " ${mount_path} " /proc/mounts 2>/dev/null; then
+    echo "[entrypoint] WARNING: ${mount_path} is NOT a Docker/EasyPanel volume — add a Volume mount or data may be lost on redeploy"
+  else
+    echo "[entrypoint] Volume OK: ${mount_path}"
+  fi
+done
+
 echo "[entrypoint] DB_HOST=${DB_HOST:-<empty>} DB_NAME=${DB_NAME:-<empty>} DB_USER=${DB_USER:-<empty>} APP_HOSTNAME=${APP_HOSTNAME:-<empty>}"
 
 if [[ ! -f "$MARKER" && "${SKIP_AUTO_INSTALL:-0}" != "1" ]]; then
