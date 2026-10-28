@@ -29,8 +29,6 @@ DB_PORT=3306
 DB_NAME=revive
 DB_USER=revive
 DB_PASSWORD=CHANGE_ME_DB_PASSWORD
-DB_TABLE_PREFIX=rv_
-DB_TABLE_TYPE=INNODB
 
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=CHANGE_ME_ADMIN_PASSWORD
@@ -42,11 +40,24 @@ REQUIRE_SSL=0
 SKIP_AUTO_INSTALL=0
 ```
 
+**Critical: `DB_HOST`**
+
+Do **not** use `db` or `localhost`.  
+Use the EasyPanel MySQL **internal hostname**, usually:
+
+`$(PROJECT_NAME)_<mysql-service-name>`
+
+Examples:
+- project `dev`, MySQL service `mysql` → `dev_mysql`
+- project `adserve`, MySQL service `database` → `adserve_database`
+
+If logs show `getaddrinfo for db failed`, your app is still using the old default host `db` — set `DB_HOST` correctly in **Environment** and Redeploy.
+
 **Required for auto-install**
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `DB_HOST` | Yes* | MySQL hostname (EasyPanel MySQL service name) |
+| `DB_HOST` | Yes* | EasyPanel MySQL internal hostname (not `db` / not `localhost`) |
 | `DB_PORT` | No | Default `3306` |
 | `DB_NAME` | Yes* | Database name |
 | `DB_USER` | Yes* | Database user |
