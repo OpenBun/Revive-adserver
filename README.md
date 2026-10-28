@@ -1,8 +1,23 @@
 # Revive Adserver (OpenBun Docker build)
 
-Docker image: [`openbun/revive-adserver:6.0.8-php8.3.36`](https://hub.docker.com/r/openbun/revive-adserver)
+Docker image: [`openbun/revive-adserver`](https://hub.docker.com/r/openbun/revive-adserver)
 
 Based on Revive Adserver **6.0.8**, running on **PHP 8.3.36** (patched for [PHP2Shell](https://www.wiz.io/blog/php2shell-php-rce)).
+
+### Image tags (use these)
+
+| Tag | Meaning |
+| --- | --- |
+| `6.0.8` | **Recommended** — Revive version |
+| `v6.0.8` | Same build, `v` prefix |
+| `latest` | Latest published build |
+| `6.0.8-php8.3.36` | Explicit PHP pin (optional) |
+
+EasyPanel / Docker example:
+
+```text
+openbun/revive-adserver:6.0.8
+```
 
 ---
 
@@ -15,7 +30,7 @@ You must paste the required variables into **Environment** before Deploy.
 
 | Field | Value |
 | --- | --- |
-| Image | `openbun/revive-adserver:6.0.8-php8.3.36` |
+| Image | `openbun/revive-adserver:6.0.8` |
 | Username / Password | leave empty (public image) |
 
 ### 2) Environment (copy / paste, then edit)
@@ -100,13 +115,8 @@ Create a MySQL service in the same EasyPanel project, create DB/user, then set `
 ## Docker Hub pull
 
 ```bash
-docker pull openbun/revive-adserver:6.0.8-php8.3.36
+docker pull openbun/revive-adserver:6.0.8
 ```
-
-Tags:
-
-- `6.0.8-php8.3.36` — recommended
-- `6.0.8` — same build, short alias
 
 ---
 
@@ -121,7 +131,7 @@ docker run --rm -p 8080:80 \
   -e ADMIN_PASSWORD=secret \
   -e ADMIN_EMAIL=admin@example.com \
   -e APP_HOSTNAME=localhost \
-  openbun/revive-adserver:6.0.8-php8.3.36
+  openbun/revive-adserver:6.0.8
 ```
 
 ---
