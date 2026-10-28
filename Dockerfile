@@ -37,8 +37,16 @@ RUN mkdir -p /var/www/html/var/plugins/DataObjects \
              /var/www/html/var/cache \
              /var/www/html/var/templates_compiled \
              /var/www/html/www/images \
-    && chown -R www-data:www-data /var/www/html/var /var/www/html/www/images \
-    && chmod -R u+rwX /var/www/html/var /var/www/html/www/images \
+    && chown -R www-data:www-data \
+         /var/www/html/var \
+         /var/www/html/plugins \
+         /var/www/html/www/admin/plugins \
+         /var/www/html/www/images \
+    && chmod -R a+rwX \
+         /var/www/html/var \
+         /var/www/html/plugins \
+         /var/www/html/www/admin/plugins \
+         /var/www/html/www/images \
     && chmod +x /var/www/html/docker/entrypoint.sh /var/www/html/docker/cli-install.php \
     && sed -i 's/\r$//' /var/www/html/docker/entrypoint.sh
 

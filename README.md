@@ -98,6 +98,8 @@ If logs show `getaddrinfo for db failed`, your app is still using the old defaul
 | --- | --- |
 | `/var/www/html/var` | Persist config / install state |
 
+The image fixes ownership/permissions on start. If System check still says `/var/www/html/var` is not writable, Redeploy after pulling the latest `6.0.8` image (entrypoint applies `chmod a+rwX`).
+
 ### 5) MySQL
 
 Create a MySQL service in the same EasyPanel project, create DB/user, then set `DB_HOST` / credentials above to match.

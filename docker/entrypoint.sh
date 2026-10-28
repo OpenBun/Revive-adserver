@@ -55,13 +55,35 @@ if [[ -f "$ENV_FILE" ]]; then
   done < "$ENV_FILE"
 fi
 
-mkdir -p \
-  "${APP_ROOT}/var/plugins/DataObjects" \
-  "${APP_ROOT}/var/cache" \
-  "${APP_ROOT}/var/templates_compiled" \
-  "${APP_ROOT}/www/images"
-chown -R www-data:www-data "${APP_ROOT}/var" "${APP_ROOT}/www/images" 2>/dev/null || true
-chmod -R u+rwX "${APP_ROOT}/var" "${APP_ROOT}/www/images" 2>/dev/null || true
+# EasyPanel volume mounts often replace /var with root-owned empty dirs.
+# Revive requires these paths writable by the web user (www-data).
+fix_writable_dirs() {
+  local dirs=(
+    "${APP_ROOT}/var"
+    "${APP_ROOT}/var/plugins"
+    "${APP_ROOT}/var/plugins/DataObjects"
+    "${APP_ROOT}/var/cache"
+    "${APP_ROOT}/var/templates_compiled"
+    "${APP_ROOT}/plugins"
+    "${APP_ROOT}/www/admin/plugins"
+    "${APP_ROOT}/www/images"
+  )
+  mkdir -p "${dirs[@]}"
+  chown -R www-data:www-data "${dirs[@]}" 2>/dev/null || true
+  # a+rwX matches Revive installer guidance and works when chown is restricted
+  chmod -R a+rwX "${dirs[@]}" 2>/dev/null || true
+  if ! su -s /bin/sh www-data -c "test -w '${APP_ROOT}/var'"; then
+    echo "[entrypoint] WARNING: ${APP_ROOT}/var not writable by www-data — applying 0777"
+    chmod -R 0777 "${APP_ROOT}/var" "${APP_ROOT}/plugins" "${APP_ROOT}/www/admin/plugins" "${APP_ROOT}/www/images" 2>/dev/null || true
+  fi
+  if su -s /bin/sh www-data -c "test -w '${APP_ROOT}/var'"; then
+    echo "[entrypoint] Writable check OK: ${APP_ROOT}/var"
+  else
+    echo "[entrypoint] ERROR: ${APP_ROOT}/var still not writable. In EasyPanel, ensure the volume for /var/www/html/var is writable."
+  fi
+}
+
+fix_writable_dirs
 
 echo "[entrypoint] DB_HOST=${DB_HOST:-<empty>} DB_NAME=${DB_NAME:-<empty>} DB_USER=${DB_USER:-<empty>} APP_HOSTNAME=${APP_HOSTNAME:-<empty>}"
 
